@@ -18,8 +18,8 @@ primary_region = 'iad'
   initial_size = "3GB"
   snapshot_retention = 14
   auto_extend_size_threshold = 80
-  auto_extend_size_increment = "5GB"
-  auto_extend_size_limit = "20GB"
+  auto_extend_size_increment = "1GB"
+  auto_extend_size_limit = "6GB"
 
 [env]
   REDIS_PORT = "6379"
