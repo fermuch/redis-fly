@@ -1,22 +1,36 @@
-# fly.toml app configuration file generated for very-redis on 2024-02-13T21:20:09+07:00
+# fly.toml app configuration file for redis-ayvu
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
-app = 'very-redis'
-primary_region = 'sin'
+app = 'redis-ayvu'
+primary_region = 'iad'
 
 [build]
-image = "ghcr.io/umarhadi/redis-fly:main"
+  image = "ghcr.io/fermuch/redis-fly:main"
 
-[http_service]
-internal_port = 6379
-force_https = true
-auto_stop_machines = false
-auto_start_machines = true
-min_machines_running = 0
-processes = ['app']
+# No service block on purpose: Redis is raw TCP, not HTTP, so it isn't exposed
+# publicly. Reach it over 6PN at redis-ayvu.internal:6379 (check `fly ips list`,
+# release any public IP). With no service block, Fly never autostops the machine.
+
+[[mounts]]
+  source = "redis_data"
+  destination = "/data"
+  initial_size = "3GB"
+  snapshot_retention = 14
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = "5GB"
+  auto_extend_size_limit = "20GB"
+
+[env]
+  REDIS_PORT = "6379"
+  REDIS_DATA_DIR = "/data"
+  REDIS_MAXMEMORY = "768mb"
+  REDIS_MAXMEMORY_POLICY = "noeviction"
+  SWAP = "1"
+  SWAP_SIZE = "2G"
+  # secret: REDIS_PASSWORD  ->  fly secrets set REDIS_PASSWORD=...
 
 [[vm]]
-cpu_kind = 'shared'
-cpus = 1
-memory_mb = 256
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024

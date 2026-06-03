@@ -1,4 +1,4 @@
-FROM redis:7.0.12-alpine
+FROM redis:8.8.0-alpine
 
 COPY ./start_redis.sh /usr/local/bin/
 
